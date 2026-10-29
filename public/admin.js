@@ -45,7 +45,7 @@ $('#newPack').onclick = async () => {
 };
 function cardRow(c = {}) {
   const tr = document.createElement('tr');
-  tr.innerHTML = '<td><input class="c-title" maxlength="80" placeholder="optional"><label class="c-duo-l"><input type="checkbox" class="c-duo"> DUO</label></td><td><textarea class="c-text" rows="2" maxlength="500" placeholder="Challenge text"></textarea></td><td><input class="c-time" type="number" min="0" max="3600" placeholder="none"></td><td><textarea class="c-info" rows="2" maxlength="1000" placeholder="optional"></textarea></td><td><button type="button" class="x">Remove</button></td>';
+  tr.innerHTML = '<td class="t-title"><span class="f-l">Title</span><input class="c-title" maxlength="80" placeholder="Optional title"><label class="c-duo-l"><input type="checkbox" class="c-duo"> DUO card</label></td><td class="t-text"><span class="f-l">Challenge</span><textarea class="c-text" rows="3" maxlength="500" placeholder="Challenge text"></textarea></td><td class="t-time"><span class="f-l">Timer (s)</span><input class="c-time" type="number" inputmode="numeric" min="0" max="3600" placeholder="None"></td><td class="t-info"><span class="f-l">Info</span><textarea class="c-info" rows="2" maxlength="1000" placeholder="Optional explanation"></textarea></td><td class="t-x"><button type="button" class="x" aria-label="Remove card">Remove</button></td>';
   tr.querySelector('.c-text').value = c.text || '';
   tr.querySelector('.c-title').value = c.title || '';
   tr.querySelector('.c-duo').checked = !!c.duo;

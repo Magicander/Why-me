@@ -282,14 +282,14 @@ function layout() {
   st.classList.toggle('rot', portrait);
 }
 function openGame() {
-  game.inGame = true; persist();
+  game.inGame = true; persist(); document.documentElement.classList.add('game-open');
   $('#game').hidden = false; document.body.style.overflow = 'hidden';
   layout(); render(false, false, true);
 }
 function closeGame() {
   pauseTimer();
   if (game) { game.inGame = false; persist(); }
-  $('#game').hidden = true; document.body.style.overflow = '';
+  $('#game').hidden = true; document.body.style.overflow = ''; document.documentElement.classList.remove('game-open');
   renderMenu(); $('#menu').scrollIntoView();
 }
 function render(flipAnim, dealAnim, instant) {
@@ -320,6 +320,7 @@ function render(flipAnim, dealAnim, instant) {
   txt.classList.toggle('xlong', (txt.textContent || '').length > 230);
   $('#penaltyDone').hidden = game.phase !== 'penalty';
   $('#btnDone').disabled = $('#btnFailed').disabled = game.phase !== 'front';
+  el.classList.toggle('can-drag', game.phase === 'front');
   const hasInfo = game.phase === 'front' && !!c.info;
   $('#btnInfo').disabled = !hasInfo; $('#btnInfo').classList.toggle('has-info', hasInfo);
   tick();
@@ -351,6 +352,85 @@ function renderEnd() {
 }
 
 $('#card').addEventListener('click', e => { if (e.target.closest('button') || game.sealed) return; reveal(); });
+/* drag the revealed card toward "done" (right edge) or "failed" (left edge). Works on the rotated
+   portrait stage too: positions are mapped into stage coordinates. The edge buttons stay as a
+   keyboard / accessibility fallback. */
+let drag = null;
+const edgeHot = (k) => {
+  const d = $('#btnDone'), f = $('#btnFailed'), a = Math.min(1, Math.abs(k));
+  d.classList.toggle('hot', k > .08); f.classList.toggle('hot', k < -.08);
+  d.classList.toggle('dim', k < -.08); f.classList.toggle('dim', k > .08);
+  (k > 0 ? d : f).style.setProperty('--pull', a);
+};
+function flyOff(dir) {
+  const el = $('#card'), w = el.offsetWidth, from = el.style.transform || 'none';
+  edgeHot(0); el.classList.remove('dragging', 'snap');
+  const done = () => { el.style.transform = ''; if (dir > 0) markDone(); else { markFailed('pass'); el.classList.remove('deal'); void el.offsetWidth; el.classList.add('deal'); } };
+  if (reduceMotion()) { done(); return; }
+  const an = el.animate([{ transform: from, opacity: 1 }, { transform: `translate(${dir * (w * .9 + innerWidth * .5)}px, -4%) rotate(${dir * 24}deg)`, opacity: 0 }], { duration: 300, easing: 'cubic-bezier(.4,.1,.8,.6)', fill: 'forwards' });
+  an.onfinish = () => { el.style.transform = 'translateX(0)'; an.cancel(); done(); };
+}
+$('#card').addEventListener('pointerdown', e => {
+  if (!game || game.sealed || game.phase !== 'front' || drag || e.button > 0 || e.target.closest('button')) return;
+  const p = toLocal(e), el = $('#card');
+  drag = { id: e.pointerId, x0: p.x, y0: p.y, dx: 0, dy: 0, hist: [[performance.now(), p.x]] };
+  try { el.setPointerCapture(e.pointerId); } catch {}
+  el.classList.remove('snap');
+});
+$('#card').addEventListener('pointermove', e => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const p = toLocal(e), el = $('#card'), w = el.offsetWidth;
+  drag.dx = p.x - drag.x0; drag.dy = p.y - drag.y0;
+  drag.hist.push([performance.now(), p.x]); if (drag.hist.length > 6) drag.hist.shift();
+  if (Math.abs(drag.dx) < 4 && !el.classList.contains('dragging')) return;
+  el.classList.add('dragging');
+  el.style.transform = `translate(${drag.dx}px, ${drag.dy * .2}px) rotate(${drag.dx / w * 10}deg)`;
+  edgeHot(drag.dx / (w * .35));
+});
+const dragEnd = e => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const el = $('#card'), w = el.offsetWidth, d = drag; drag = null;
+  const [t0, x0] = d.hist[0], [t1, x1] = d.hist[d.hist.length - 1], v = (x1 - x0) / Math.max(1, t1 - t0);
+  const commit = Math.abs(d.dx) > w * .3 || (Math.abs(d.dx) > 40 && Math.abs(v) > .6 && Math.sign(v) === Math.sign(d.dx));
+  if (e.type === 'pointerup' && commit && game.phase === 'front') { flyOff(Math.sign(d.dx)); return; }
+  el.classList.remove('dragging'); el.classList.add('snap'); el.style.transform = ''; edgeHot(0);
+  setTimeout(() => el.classList.remove('snap'), 320);
+};
+$('#card').addEventListener('pointerup', dragEnd); $('#card').addEventListener('pointercancel', dragEnd);
+/* Landing: section-to-section snapping. A light scroll (or a short swipe) past a section edge
+   glides to the next section. Sections taller than the screen scroll freely inside (their top and
+   bottom are snap points), so nothing is trapped. Done in JS because CSS mandatory snapping pulls a
+   light scroll back to where it started and behaves differently in mobile Safari and Chrome. */
+(() => {
+  const secs = [...document.querySelectorAll('.sec')];
+  let anchor = scrollY, t = 0, busy = false, touching = false;
+  const points = () => {
+    const vh = innerHeight, max = document.documentElement.scrollHeight - vh, out = new Set();
+    for (const s of secs) { const a = s.offsetTop; out.add(Math.min(a, max)); if (s.offsetHeight > vh + 2) out.add(Math.min(a + s.offsetHeight - vh, max)); }
+    return [...out].sort((a, b) => a - b);
+  };
+  const settle = () => {
+    if (busy || touching || !$('#game').hidden) return;
+    const y = scrollY, vh = innerHeight, d = y - anchor;
+    for (const s of secs) { const a = s.offsetTop, b = a + s.offsetHeight; if (s.offsetHeight > vh + 2 && y >= a - 1 && y + vh <= b + 1) { anchor = y; return; } }
+    const pts = points(); let target;
+    if (Math.abs(d) < 24) target = pts.reduce((m, p) => Math.abs(p - y) < Math.abs(m - y) ? p : m, pts[0]);
+    else if (d > 0) { const ahead = pts.filter(p => p > anchor + 1); const past = ahead.filter(p => p <= y), next = ahead.find(p => p >= y);
+      const last = past[past.length - 1]; target = next === undefined || (last !== undefined && y - last < vh * .5) ? (last ?? next) : next; }
+    else { const ahead = pts.filter(p => p < anchor - 1).reverse(); const past = ahead.filter(p => p >= y), next = ahead.find(p => p <= y);
+      const last = past[past.length - 1]; target = next === undefined || (last !== undefined && last - y < vh * .5) ? (last ?? next) : next; }
+    if (target === undefined || Math.abs(target - y) < 2) { anchor = y; return; }
+    busy = true; anchor = target;
+    window.scrollTo({ top: target, behavior: reduceMotion() ? 'auto' : 'smooth' });
+    const done = () => { busy = false; anchor = scrollY; removeEventListener('scrollend', done); };
+    addEventListener('scrollend', done); setTimeout(() => busy && done(), 900);
+  };
+  addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(settle, 130); }, { passive: true });
+  addEventListener('touchstart', () => { touching = true; }, { passive: true });
+  addEventListener('touchend', () => { touching = false; clearTimeout(t); t = setTimeout(settle, 130); }, { passive: true });
+  addEventListener('resize', () => { anchor = scrollY; });
+  window.__snap = { points, get anchor() { return anchor; } };
+})();
 $('#timerStart').onclick = startTimer;
 $('#btnDone').onclick = markDone;
 $('#btnFailed').onclick = () => markFailed('pass');
@@ -362,7 +442,7 @@ $('#againBtn').onclick = () => {
   const sel = selections().find(s => s.id === game.selId) || currentSel();
   game = newGame(sel); persist(); render(false, false, true);
 };
-$('#menuBtn').onclick = () => { localStorage.removeItem(KEY.game); game = null; $('#game').hidden = true; document.body.style.overflow = ''; renderMenu(); $('#menu').scrollIntoView(); };
+$('#menuBtn').onclick = () => { localStorage.removeItem(KEY.game); game = null; $('#game').hidden = true; document.body.style.overflow = ''; document.documentElement.classList.remove('game-open'); renderMenu(); $('#menu').scrollIntoView(); };
 $('#playBtn').onclick = () => {
   const sel = currentSel();
   if (!uniqueCards(sel.cards).length) return;
@@ -414,7 +494,8 @@ function buildSeal() {
   const hint = document.createElement('p'); hint.className = 'seal-hint'; hint.id = 'sealHint'; hint.textContent = 'Swipe to open';
   const tap = document.createElement('button'); tap.type = 'button'; tap.className = 'pill pill-navy seal-tap'; tap.id = 'sealTap'; tap.textContent = 'Tap to open'; tap.hidden = true;
   tap.onclick = () => autoTear(1);
-  el.append(pack, hint, tap);
+  const cards = document.createElement('div'); cards.className = 'seal-cards'; cards.setAttribute('aria-hidden', 'true');
+  el.append(cards, pack, hint, tap);
   hit.addEventListener('pointerdown', tearDown);
   hit.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); autoTear(1); } });
   clearTimeout(tapHintT); tapHintT = setTimeout(() => { if (game && game.sealed) tap.hidden = false; }, 3500);
@@ -505,7 +586,7 @@ function finishTear(dir) {
     { transform: `translate(${dir * 120}%, -60%) rotate(${dir * 55}deg)`, opacity: 0 }], { duration: 520, easing: 'cubic-bezier(.3,.1,.6,1)', fill: 'forwards' });
   // 2) wrapper slides down and out, the pile stays
   const table = $('.table');
-  table.animate([{ opacity: 0, transform: 'scale(.94)' }, { opacity: 0, transform: 'scale(.94)', offset: .3 }, { opacity: 1, transform: 'scale(1)' }], { duration: 1050, easing: 'ease-out' });
+  table.animate([{ opacity: 0 }, { opacity: 0, offset: .85 }, { opacity: 1 }], { duration: 1200 });
   setTimeout(() => { el.dataset.phase = 'slide'; }, 380);
   const sl = pack.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(0)', offset: .36 }, { transform: 'translateY(-3%)', offset: .45 },
     { transform: 'translateY(115%) rotate(3deg)', opacity: 1 }], { duration: 1200, easing: 'cubic-bezier(.5,0,.75,0)', fill: 'forwards' });

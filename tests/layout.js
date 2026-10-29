@@ -13,7 +13,7 @@ const SCREENS = {
   menuOpen: { hOnly: ['#modePills button', '#packPills button', '#packInfo', '#settings', '#playBtn', '#menuNote'],
     apart: [['#modePills', '#deckRow'], ['#deckRow', '#packInfo'], ['#packInfo', '#settings'], ['#settings', '#playBtn'], ['#modePills', '#packInfo']], each: '#packPills button' },
   menuClosed: { hOnly: ['#modePills button', '#packInfo', '#settings', '#playBtn'], apart: [['#modePills', '#packInfo'], ['#packInfo', '#settings'], ['#settings', '#playBtn']] },
-  seal: { centred: '#sealPack', inView: ['#sealPack', '#sealHint', '#sealTap', '#gExit'], apart: [['#sealHint', '#sealPack'], ['#sealHint', '#gExit'], ['#gExit', '#sealPack'], ['#gExit', '#sealHint']] },
+  seal: { centred: '#sealPack', inView: ['#sealPack', '#sealHint', '#sealTap', '#gExit'], within: [['#sealHint', '#sealPack'], ['#sealTap', '#sealPack']], apart: [['#sealHint', '#sealTap'], ['#sealHint', '#gExit'], ['#gExit', '#sealPack'], ['#gExit', '#sealHint']] },
   game: { centred: '#card', fits: ['#cardText'], inView: ['#gExit', '#btnFailed', '#card', '#btnDone', '#btnInfo', '#gTimer'],
     apart: [['#btnFailed', '#card'], ['#btnDone', '#card'], ['#gExit', '#card'], ['#btnInfo', '#card'], ['#gTimer', '#card'], ['#btnInfo', '#btnDone'], ['#btnInfo', '#btnFailed img'], ['#gTimer', '#btnDone img'], ['#gExit', '#btnFailed img'], ['#gTimer', '#gExit']] },
   info: { inView: ['#infoText', '#infoClose'], apart: [['#infoText', '#infoClose']] },

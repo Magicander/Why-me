@@ -25,6 +25,24 @@ async function swipe(p, x0, x1, { touch = false, steps = 12 } = {}) {
 }
 async function openSeal(p, opts) { await swipe(p, 4, 80, opts); await p.waitForSelector('#seal', { state: 'hidden', timeout: 4000 }); }
 const centre = (p, sel) => p.evaluate(sel => { const r = document.querySelector(sel).getBoundingClientRect(); return { dx: (r.left + r.right) / 2 - innerWidth / 2, dy: (r.top + r.bottom) / 2 - innerHeight / 2, w: r.width, h: r.height }; }, sel);
+/* drag the revealed card from its centre toward an edge label, `frac` of the way (screen coords, so it works rotated) */
+async function dragCard(p, target, frac = .8, { touch = false, steps = 14, hold } = {}) {
+  const [a, b] = await p.evaluate(t => [document.querySelector('#cardKicker'), document.querySelector(t)].map(e => { const r = e.getBoundingClientRect(); return { x: (r.left + r.right) / 2, y: (r.top + r.bottom) / 2 }; }), target);
+  const s0 = { x: a.x, y: a.y + 0 }, pts = []; for (let i = 0; i <= steps; i++) pts.push({ x: s0.x + (b.x - s0.x) * frac * i / steps, y: s0.y + (b.y - s0.y) * frac * i / steps });
+  if (touch) {
+    const cdp = await p.context().newCDPSession(p);
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [pts[0]] });
+    for (const q of pts.slice(1)) { await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [q] }); await sleep(20); }
+    if (hold) await hold();
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await cdp.detach();
+  } else {
+    await p.mouse.move(pts[0].x, pts[0].y); await p.mouse.down();
+    for (const q of pts.slice(1)) { await p.mouse.move(q.x, q.y); await sleep(20); }
+    if (hold) await hold();
+    await p.mouse.up();
+  }
+  await sleep(450);
+}
 const mode = (p, m) => p.click(`#modePills button[data-mode=${m}]`);
 
 (async () => {
@@ -94,6 +112,7 @@ const mode = (p, m) => p.click(`#modePills button[data-mode=${m}]`);
     let st = await g(); ok(st.phase === 'back' && st.deck.length === 4, 'face-down card');
     ok(new Set(st.deck.map(c => c.text)).size === 4, 'no repeated challenges');
     await p.click('#btnDone', { force: true }).catch(() => {}); ok((await g()).phase === 'back', 'done disabled before reveal');
+    await dragCard(p, '#btnDone', .85); ok((await g()).phase !== 'front' && (await g()).history.length === 0, 'face-down card cannot be dragged to done');
     // play through, handling each card by type
     let sawTimer = false, sawInfo = false, sawPenalty = false, sawRefresh = false;
     for (let i = 0; i < 4; i++) {
@@ -114,8 +133,15 @@ const mode = (p, m) => p.click(`#modePills button[data-mode=${m}]`);
         st = await g(); ok(st.phase === 'penalty' && st.penaltyReason === 'time', 'timer expiry -> penalty');
         sawTimer = true;
       } else if (!sawPenalty) {
-        await p.click('#btnFailed'); st = await g(); ok(st.phase === 'penalty', 'failed -> penalty');
-      } else { await p.click('#btnDone'); continue; }
+        let hot = false;
+        await dragCard(p, '#btnFailed', .12); st = await g(); ok(st.phase === 'front', 'short drag snaps back (no resolve)');
+        await dragCard(p, '#btnFailed', .85, { hold: async () => { hot = await p.evaluate(() => document.querySelector('#btnFailed').classList.contains('hot')); } });
+        st = await g(); ok(hot, 'failed label highlights while dragging'); ok(st.phase === 'penalty', 'drag to failed -> penalty');
+        ok(!(await p.evaluate(() => document.querySelector('#card').style.transform)), 'card transform reset after fly-off');
+      } else {
+        const n = st.history.length; await dragCard(p, '#btnDone', .85); st = await g();
+        ok(st.history.length === n + 1 && st.history[n].result === 'done', 'drag to done -> done'); continue;
+      }
       sawPenalty = true;
       ok(await p.isVisible('#penaltyDone'), 'penalty shown: ' + await p.textContent('#cardText'));
       ok(st.penalty && (['Sing the alphabet.'].includes(st.penalty)), 'pack penalty used');
@@ -144,7 +170,7 @@ const mode = (p, m) => p.click(`#modePills button[data-mode=${m}]`);
     await mode(p, 'random'); ok((await p.getAttribute('#deckRow', 'aria-hidden')) === 'true' && !(await p.locator('#deckRow').evaluate(e => e.classList.contains('open'))), 'Random hides the deck row');
     await p.click('#cardsMinus'); await p.click('#cardsMinus');
     ok((await p.textContent('#cardsOut')).trim() === '13', 'random count adjustable');
-    p.once('dialog', d => d.accept());
+    p.once('dialog', d => d.accept().catch(() => {}));
     await p.click('#playBtn'); await p.waitForSelector('#game:not([hidden])');
     st = await g(); ok(st.deck.length === 13 && st.selId === 'random', 'random game with 13 cards');
 
@@ -188,6 +214,7 @@ const mode = (p, m) => p.click(`#modePills button[data-mode=${m}]`);
       ok(await p.isVisible('#sealPack') && (await g()).sealed, 'refresh before opening -> sealed deck again');
       await sleep(600); const sp = await centre(p, '#sealPack');
       ok(Math.abs(sp.dx) <= 1 && Math.abs(sp.dy) <= 1 && sp.h > sp.w, 'portrait: sealed pack centred and lying flat on the rotated stage');
+      const sc = await centre(p, '.seal-cards'); ok(sp.w > sc.w * 1.05 && sp.h > sc.h * 1.05 && Math.abs(sc.dx) <= 1 && Math.abs(sc.dy) <= 1, 'pack is bigger than the card stack inside it, both centred');
       // short swipe does not open
       await swipe(p, 5, 25); await sleep(400);
       ok((await g()).sealed && await p.isVisible('#sealPack'), 'short swipe does not open');
@@ -197,7 +224,7 @@ const mode = (p, m) => p.click(`#modePills button[data-mode=${m}]`);
       st = await g(); ok(!st.sealed && st.phase === 'back' && st.deck.length === 24 && (await p.evaluate(() => window.__whyme.opens)) >= 1, 'portrait swipe (mouse) opened the deck, pile ready');
       ok(st.deck.filter(c => c.duo).length === 2, 'both DUO copies dealt in a full game');
       const cc = await centre(p, '#card');
-      ok(Math.abs(cc.dx) <= 1 && Math.abs(cc.dy) <= 1 && Math.abs(cc.w - sp.w) <= 1 && Math.abs(cc.h - sp.h) <= 1, `pile exactly where the pack was (${cc.w.toFixed(0)}x${cc.h.toFixed(0)}, centre off ${cc.dx.toFixed(2)},${cc.dy.toFixed(2)})`);
+      ok(Math.abs(cc.dx) <= 1 && Math.abs(cc.dy) <= 1 && Math.abs(cc.w - sc.w) <= 1 && Math.abs(cc.h - sc.h) <= 1, `pile exactly where the stack inside the pack was (${cc.w.toFixed(0)}x${cc.h.toFixed(0)}, centre off ${cc.dx.toFixed(2)},${cc.dy.toFixed(2)})`);
       ok((await p.locator('#gCount, .g-count').count()) === 0 && !/\d+\s*\/\s*\d+/.test(await p.locator('#stage').evaluate(e => [...e.querySelectorAll('*')].filter(x => x.children.length === 0 && x.offsetParent).map(x => x.textContent).join(' '))), 'no cards-left counter');
       await p.reload(); await p.waitForSelector('#game:not([hidden])'); await sleep(200);
       ok(await p.isHidden('#seal') && !(await g()).sealed && (await p.evaluate(() => window.__whyme.opens)) === 0, 'refresh after opening -> pile, no seal');
@@ -208,7 +235,7 @@ const mode = (p, m) => p.click(`#modePills button[data-mode=${m}]`);
       // landscape, right-to-left swipe with touch
       await p.click('#gExit'); await p.click('#packPills button[data-id=eight-legged-octopus]'); await p.click('#cardsMinus');
       await p.setViewportSize({ width: 844, height: 390 }); await sleep(300);
-      p.once('dialog', d => d.accept());
+      p.once('dialog', d => d.accept().catch(() => {}));
       await p.click('#playBtn'); await p.waitForSelector('#sealPack');
       ok(!(await p.evaluate(() => document.querySelector('#stage').classList.contains('rot'))), 'landscape stage');
       await sleep(600); const lp = await centre(p, '#sealPack'); ok(Math.abs(lp.dx) <= 1 && Math.abs(lp.dy) <= 1 && lp.w > lp.h, 'landscape: sealed pack centred and horizontal');
@@ -216,19 +243,23 @@ const mode = (p, m) => p.click(`#modePills button[data-mode=${m}]`);
       await swipe(p, 96, 15, { touch: true }); await p.waitForSelector('#seal', { state: 'hidden', timeout: 4000 });
       st = await g(); ok(!st.sealed && st.deck.length === 22 && st.deck.filter(c => c.duo).length % 2 === 0, 'landscape touch swipe (right to left) opened; DUO pair kept (22 cards)');
       await p.click('#card', { position: { x: 60, y: 60 } }); await sleep(700); ok((await g()).phase === 'front', 'landscape: tap pile flips');
+      await dragCard(p, '#btnFailed', .85, { touch: true }); ok((await g()).phase === 'penalty', 'landscape touch drag to failed -> penalty');
       // portrait touch swipe, and the tap fallbacks
       await p.setViewportSize({ width: 390, height: 844 }); await p.click('#gExit');
-      p.once('dialog', d => d.accept()); await p.click('#playBtn'); await p.waitForSelector('#sealPack');
+      p.once('dialog', d => d.accept().catch(() => {})); await p.click('#playBtn'); await p.waitForSelector('#sealPack');
       await swipe(p, 10, 90, { touch: true }); await p.waitForSelector('#seal', { state: 'hidden', timeout: 4000 });
       ok(!(await g()).sealed, 'portrait touch swipe opened');
-      await p.click('#gExit'); p.once('dialog', d => d.accept()); await p.click('#playBtn'); await p.waitForSelector('#sealPack'); await sleep(500);
+      await p.click('#card', { position: { x: 60, y: 60 } }); await sleep(700);
+      { const n = (await g()).history.length; await dragCard(p, '#btnDone', .85, { touch: true }); const s3 = await g(); ok(s3.history.length === n + 1 && s3.history[n].result === 'done', 'portrait (rotated) touch drag to done -> done'); }
+      await p.keyboard.press('Escape');
+      await p.click('#gExit'); p.once('dialog', d => d.accept().catch(() => {})); await p.click('#playBtn'); await p.waitForSelector('#sealPack'); await sleep(500);
       const tp = await p.evaluate(() => window.__whyme.tearPoint(30)); await p.mouse.click(tp.x, tp.y);
       await p.waitForSelector('#seal', { state: 'hidden', timeout: 4000 }); ok(!(await g()).sealed, 'tap on the tear line opens it');
-      await p.click('#gExit'); p.once('dialog', d => d.accept()); await p.click('#playBtn'); await p.waitForSelector('#sealPack');
+      await p.click('#gExit'); p.once('dialog', d => d.accept().catch(() => {})); await p.click('#playBtn'); await p.waitForSelector('#sealPack');
       await p.waitForSelector('#sealTap:not([hidden])', { timeout: 6000 }); ok(true, "'Tap to open' appears after a few seconds");
       await p.click('#sealTap'); await p.waitForSelector('#seal', { state: 'hidden', timeout: 4000 }); ok(!(await g()).sealed, "'Tap to open' opens");
       // Random uses a plain navy pack
-      await p.click('#gExit'); await mode(p, 'random'); p.once('dialog', d => d.accept()); await p.click('#playBtn'); await p.waitForSelector('#sealPack');
+      await p.click('#gExit'); await mode(p, 'random'); p.once('dialog', d => d.accept().catch(() => {})); await p.click('#playBtn'); await p.waitForSelector('#sealPack');
       ok(await p.locator('#sealPack').evaluate(e => e.classList.contains('plain') && /plain-pack/.test(e.querySelector('.body .seal-art').style.backgroundImage)), 'Random: plain navy pack');
       await openSeal(p); ok(!(await g()).sealed, 'Random pack opens with the same swipe');
       await p.click('#gExit');
@@ -245,6 +276,19 @@ const mode = (p, m) => p.click(`#modePills button[data-mode=${m}]`);
       await rc.close();
     }
 
+    console.log('Scroll snap');
+    { const sp = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: false });
+      await sp.goto(BASE + '/'); await sp.evaluate(() => localStorage.setItem('whyme.a2hs.never', '1')); await sp.reload(); await sleep(400);
+      ok(await sp.evaluate(() => window.__snap.points().length >= 4), 'section snap points defined');
+      await sp.mouse.move(200, 400); await sp.mouse.wheel(0, 140); await sleep(1300);
+      const y = await sp.evaluate(() => [scrollY, document.querySelector('#rules').offsetTop]); ok(Math.abs(y[0] - y[1]) <= 2, `light scroll snaps title -> How to play (${y[0]} vs ${y[1]})`);
+      await sp.mouse.wheel(0, -120); await sleep(1300); ok((await sp.evaluate(() => scrollY)) === 0, 'light scroll up snaps back to the title');
+      await sp.mouse.wheel(0, 40); await sleep(1300); ok(Math.abs((await sp.evaluate(() => scrollY)) - y[1]) <= 2, 'small scroll down again catches How to play');
+      await sp.setViewportSize({ width: 360, height: 640 }); await sleep(300);
+      await sp.evaluate(() => document.querySelector('#playBtn').scrollIntoView({ block: 'end', behavior: 'instant' })); await sleep(1200);
+      const vis = await sp.evaluate(() => { const r = document.querySelector('#playBtn').getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; });
+      ok(vis, 'tall section content (Play button) reachable, not trapped by snapping');
+      await sp.close(); }
     console.log('No emoji');
     const txt = (await p.evaluate(() => document.body.innerText)) + (await a.evaluate(() => document.body.innerText));
     ok(!/\p{Extended_Pictographic}/u.test(txt), 'no emoji in UI');

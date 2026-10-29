@@ -1,0 +1,7 @@
+{
+  "contactEmail": "whyme@gmail.com",
+  "port": 3000,
+  "sessionHours": 12,
+  "maxIdeaLength": 600,
+  "maxUploadBytes": 2097152
+}

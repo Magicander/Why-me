@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Why Me? - a simple game of challenges</title>
+<meta name="description" content="Why Me? is a simple party card game of challenges. Put the phone on the table, take a card, do the challenge.">
+<meta name="theme-color" content="#003087">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Why Me?">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main id="landing">
+  <!-- Section 1: title -->
+  <section class="sec sec-title navy" id="top">
+    <h1 class="title-art" aria-label="Why Me?">
+      <img class="why bloom" src="/assets/why.svg" alt="" draggable="false">
+      <span class="tagline bloom-late">A simple game<br>of challenges</span>
+      <img class="me bloom bloom-2" src="/assets/me.svg" alt="" draggable="false">
+    </h1>
+    <a class="scroll-hint" href="#rules" aria-label="Scroll to rules"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </section>
+
+  <!-- Section 2: rules -->
+  <section class="sec sec-rules" id="rules">
+    <div class="corner-dias tl navy-dias"><i class="dia"></i><i class="dia"></i></div>
+    <h2 class="h2">How to play</h2>
+    <ol class="rule-cards">
+      <li class="rule-card"><b>1</b><h3>Gather around</h3><p>Put the phone flat in the middle of the table.</p></li>
+      <li class="rule-card"><b>2</b><h3>Take a card</h3><p>Tap the deck to reveal your challenge.</p></li>
+      <li class="rule-card"><b>3</b><h3>Do the challenge</h3><p>Done it? Tap <em>done</em>. Gave up? Tap <em>failed</em> and take the penalty.</p></li>
+      <li class="rule-card"><b>4</b><h3>Have fun</h3><p>No points, no losers. Only stories.</p></li>
+    </ol>
+  </section>
+
+  <!-- Section 3: menu -->
+  <section class="sec sec-menu" id="menu">
+    <div class="corner-dias tl navy-dias"><i class="dia"></i><i class="dia"></i></div>
+    <img class="deck-word" src="/assets/deck.svg" alt="Deck">
+    <div class="resume" id="resume" hidden>
+      <span>You have a game in progress</span>
+      <button class="pill pill-navy" id="resumeBtn" type="button">Resume</button>
+    </div>
+    <div class="mode-pills" id="modePills" role="tablist" aria-label="Choose a mode">
+      <button type="button" role="tab" data-mode="deck">Deck</button>
+      <button type="button" role="tab" data-mode="random">Random</button>
+      <button type="button" role="tab" data-mode="own">Own</button>
+    </div>
+    <div class="deck-row" id="deckRow"><div class="deck-row-in">
+      <div class="pack-pills" id="packPills" role="tablist" aria-label="Choose a deck"></div>
+    </div></div>
+    <div class="pack-info" id="packInfo"></div>
+    <div class="settings" id="settings">
+      <div class="set-row">
+        <span>Cards in game</span>
+        <div class="stepper">
+          <button type="button" id="cardsMinus" aria-label="Fewer cards">-</button>
+          <output id="cardsOut">0</output>
+          <button type="button" id="cardsPlus" aria-label="More cards">+</button>
+        </div>
+      </div>
+      <label class="set-row">
+        <span>Timers</span>
+        <input type="checkbox" class="switch" id="timersToggle" checked>
+      </label>
+    </div>
+    <button class="play-btn" id="playBtn" type="button" aria-label="Play"><img src="/assets/play.svg" alt=""></button>
+    <p class="menu-note" id="menuNote"></p>
+  </section>
+
+  <!-- Section 4: contact -->
+  <section class="sec sec-contact navy" id="contact">
+    <h2 class="contact-h">Contact</h2>
+    <a class="mail" id="mailLink" href="#"></a>
+    <div class="idea-head"><img src="/assets/arrow.svg" alt="" class="arrow"><p>If you have an idea<br>for a challenge?</p></div>
+    <form class="idea-form" id="ideaForm" novalidate>
+      <textarea name="text" id="ideaText" rows="4" maxlength="600" placeholder="Describe your challenge..." required></textarea>
+      <div class="idea-row">
+        <input name="name" maxlength="60" placeholder="Your name (optional)" autocomplete="name">
+        <input name="email" type="email" maxlength="120" placeholder="Email (optional)" autocomplete="email">
+      </div>
+      <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="pill pill-white" type="submit">Send idea</button>
+      <p class="form-msg" id="ideaMsg" role="status"></p>
+    </form>
+    <div class="corner-dias br"><i class="dia"></i><i class="dia"></i></div>
+    <p class="foot">Why Me? &middot; a simple game of challenges</p>
+  </section>
+</main>
+
+<!-- Own cards creator -->
+<div class="overlay" id="creator" hidden role="dialog" aria-modal="true" aria-labelledby="creatorTitle">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="creatorTitle">My own cards</h2><button class="pill pill-ghost" type="button" data-close>Close</button></div>
+    <form id="ownForm" class="own-form">
+      <textarea id="ownText" rows="3" maxlength="500" placeholder="Write a challenge..." required></textarea>
+      <div class="idea-row">
+        <input id="ownTime" type="number" min="0" max="3600" inputmode="numeric" placeholder="Timer seconds (optional)">
+        <input id="ownInfo" maxlength="1000" placeholder="Explanation (optional)">
+      </div>
+      <button class="pill pill-navy" type="submit">Add card</button>
+    </form>
+    <ul class="own-list" id="ownList"></ul>
+  </div>
+</div>
+
+<!-- Add to home screen prompt -->
+<div class="overlay a2hs navy" id="a2hs" hidden role="dialog" aria-modal="true" aria-labelledby="a2hsTitle">
+  <div class="a2hs-in">
+    <div class="corner-dias tl"><i class="dia"></i><i class="dia"></i></div>
+    <h2 id="a2hsTitle">Play it like an app</h2>
+    <p>Add Why Me? to your home screen. It opens full screen and works offline.</p>
+    <ol class="a2hs-steps" id="a2hsSteps"></ol>
+    <button class="pill pill-white" id="a2hsInstall" type="button" hidden>Install now</button>
+    <div class="a2hs-btns">
+      <button class="pill pill-white" id="a2hsSkip" type="button">Skip</button>
+      <button class="pill pill-ghost-w" id="a2hsNever" type="button">Don't show again</button>
+    </div>
+  </div>
+</div>
+
+<!-- Game -->
+<div class="game" id="game" hidden>
+  <div class="stage" id="stage">
+    <button class="g-exit" id="gExit" type="button" aria-label="Back to menu"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="g-timer" id="gTimer" hidden></div>
+    <button class="edge edge-failed" id="btnFailed" type="button" aria-label="Failed"><img src="/assets/failed.svg" alt=""></button>
+    <div class="table">
+      <div class="deck-under" id="deckUnder"></div>
+      <div class="card" id="card">
+        <div class="card-in">
+          <div class="face back"><span class="back-title">Why Me?</span><i class="dia d1"></i><i class="dia d2"></i></div>
+          <div class="face front">
+            <div class="front-panel">
+              <span class="cdias tl"><i class="dia"></i><i class="dia"></i></span>
+              <span class="cdias br"><i class="dia"></i><i class="dia"></i></span>
+              <p class="kicker" id="cardKicker"></p>
+              <h2 class="ctitle" id="cardTitle" hidden></h2>
+              <p class="ctext" id="cardText"></p>
+              <button class="pill pill-navy timer-start" id="timerStart" type="button" hidden></button>
+              <button class="pill pill-navy" id="penaltyDone" type="button" hidden>Penalty done</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="edge edge-done" id="btnDone" type="button" aria-label="Done"><img src="/assets/done.svg" alt=""></button>
+    <button class="g-info" id="btnInfo" type="button" aria-label="Explain this challenge"><span>i</span></button>
+    <div class="info-pop" id="infoPop" hidden><p id="infoText"></p><button class="pill pill-white" id="infoClose" type="button">Got it</button></div>
+    <div class="seal" id="seal" hidden></div>
+    <div class="end" id="endView" hidden>
+      <h2>Deck finished</h2>
+      <p class="end-sum" id="endSum"></p>
+      <ul class="end-list" id="endList"></ul>
+      <div class="end-btns"><button class="pill pill-white" id="againBtn" type="button">Play again</button><button class="pill pill-ghost-w" id="menuBtn" type="button">Menu</button></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+<script src="/app.js"></script>
+</body>
+</html>

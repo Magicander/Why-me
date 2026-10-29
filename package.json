@@ -1,0 +1,20 @@
+{
+  "name": "whyme",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Why Me? - a simple party card game of challenges (PWA + tiny Node backend)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "set-password": "node scripts/set-password.js",
+    "test": "node tests/e2e.js",
+    "test:layout": "node tests/layout.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  }
+}

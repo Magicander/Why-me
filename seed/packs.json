@@ -1,0 +1,446 @@
+[
+  {
+    "id": "legless-lizard",
+    "name": "Legless Lizard",
+    "description": "Party challenges for brave players: races, dares, duets and drinks.",
+    "image": "/packs/legless-lizard.png",
+    "published": true,
+    "cards": [
+      {
+        "id": "ll01",
+        "title": "Clothing Swap!",
+        "text": "Swap clothes with your partner or the person on your right."
+      },
+      {
+        "id": "ll02",
+        "title": "Picture Perfect!",
+        "text": "The group chooses a picture for you. You have 3 minutes to recreate it as beautifully as possible.",
+        "timeSeconds": 180,
+        "info": "The group picks any picture, for example a famous painting or a photo on a phone. Recreate it with your body, people and objects around you. The group judges."
+      },
+      {
+        "id": "ll03",
+        "title": "Make Them Laugh!",
+        "text": "Everyone in the group takes a mouthful of water. You have 3 minutes to make 4 of them laugh and spit out their water.",
+        "timeSeconds": 180,
+        "info": "Everyone keeps the water in their mouth until they laugh or the time runs out. You need 4 people to spit or swallow while laughing."
+      },
+      {
+        "id": "ll04",
+        "title": "Human Canvas!",
+        "text": "Your back is the canvas, and the person on your left is a blind artist. Describe the picture chosen by the group as accurately as possible so they can recreate it on your back.",
+        "info": "The group shows you a picture your partner cannot see. Describe it with words only while your partner draws it on your back with a finger. Then they redraw what they felt on paper, and the group decides if it matches."
+      },
+      {
+        "id": "ll05",
+        "title": "Sock Snatcher!",
+        "text": "You have 30 seconds to take off your partner's sock or the sock of the person on your left. Boys target boys, and girls target girls.",
+        "timeSeconds": 30
+      },
+      {
+        "id": "ll06",
+        "title": "Marco Polo!",
+        "text": "You're the seeker! You have 5 minutes to find your hidden friends. Once you shout \"I'm coming!\", the hiders must not move, lift their feet, or even twitch a muscle.",
+        "timeSeconds": 300,
+        "info": "Everyone else hides while you count with your eyes closed. Start the timer when you shout \"I'm coming!\". Find all of them to succeed."
+      },
+      {
+        "id": "ll07",
+        "title": "Upside-Down Quiz!",
+        "text": "Spend 5 seconds upside down, then answer 2 out of 4 questions.",
+        "timeSeconds": 5,
+        "info": "The timer is for the 5 seconds upside down (a handstand against a wall or hanging off the sofa both count). Then the group, starting with the person on your left, asks you 4 quick questions. Answer at least 2 correctly."
+      },
+      {
+        "id": "ll08",
+        "title": "Safe Seeker!",
+        "text": "You're the seeker, but you're safe! Every person you find has to take a shot instead of you. You have 3 minutes.",
+        "timeSeconds": 180,
+        "info": "Everyone else hides. Each person you find within 3 minutes takes a shot. You are never penalised on this card unless you refuse to seek."
+      },
+      {
+        "id": "ll09",
+        "title": "Human Charades!",
+        "text": "The person on your left gives you a four-word phrase. You must act it out using only your body. From the moment someone says \"START\", you're not allowed to make a single sound. Every sound earns you a shot. You have 3 minutes.",
+        "timeSeconds": 180,
+        "info": "Act out the four words so the group guesses the whole phrase. Any sound you make costs you a shot."
+      },
+      {
+        "id": "ll10",
+        "title": "Lost in Translation!",
+        "text": "The person on your left puts on headphones with loud music so they can't hear anything. You must communicate a sentence made up by the person on your right. The sentence must contain at least 3 words. You have 3 minutes.",
+        "timeSeconds": 180,
+        "info": "Mime, mouth or point, but the listener cannot hear. They must say the full sentence back to succeed."
+      },
+      {
+        "id": "ll11",
+        "title": "Wikipedia Race!",
+        "text": "Starting with a word given by the person on your left, use Wikipedia links to navigate to the word given by the person on your right. You have 2 minutes.",
+        "timeSeconds": 120,
+        "info": "Open the Wikipedia article for the start word. You may only click links inside articles: no search box, no typing the address. Reach the target article within the time."
+      },
+      {
+        "id": "ll12",
+        "title": "DUO CARD: Same Word!",
+        "text": "Wait until someone draws the matching card. Together, play \"Say the Same Word\"! You must say a word at the same time, following a chain of associations until you both say the same word. Every time you say different words, you both take half a shot. The group gives you the starting words. No cheating — your words must be genuine associations!",
+        "duo": true,
+        "info": "DUO card: there are two copies of this card in the deck. Whoever draws the first copy keeps it in mind and taps done; the game goes on. When someone draws the second copy, both of you play together, and the second player taps done or failed for the pair. Say the Same Word: on a count of three, both say one word at the same time. Each next word must be a real association with the two words just said. Keep going until you both say the same word."
+      },
+      {
+        "id": "ll13",
+        "title": "DUO CARD: Same Word!",
+        "text": "Wait until someone draws the matching card. Together, play \"Say the Same Word\"! You must say a word at the same time, following a chain of associations until you both say the same word. Every time you say different words, you both take half a shot. The group gives you the starting words. No cheating — your words must be genuine associations!",
+        "duo": true,
+        "info": "DUO card: there are two copies of this card in the deck. Whoever draws the first copy keeps it in mind and taps done; the game goes on. When someone draws the second copy, both of you play together, and the second player taps done or failed for the pair. Say the Same Word: on a count of three, both say one word at the same time. Each next word must be a real association with the two words just said. Keep going until you both say the same word."
+      },
+      {
+        "id": "ll14",
+        "title": "Name That Tune!",
+        "text": "The group chooses songs for you. You must identify at least half of them. If you take longer than 5 seconds to answer, it doesn't count!",
+        "info": "The group plays or hums short parts of songs. Each answer must come within 5 seconds. Get at least half right. No overall timer."
+      },
+      {
+        "id": "ll15",
+        "title": "Blind Art Detective!",
+        "text": "Close your eyes and describe a drawing for everyone else to draw. Then, guess who drew each picture. If you guess correctly, that person drinks. You're safe!",
+        "info": "Keep your eyes closed while you describe and while the others draw. Then open them and guess who drew each picture."
+      },
+      {
+        "id": "ll16",
+        "title": "Fashion Model!",
+        "text": "You're the model, and everyone in the group gets to dress you up using any clothing or objects they choose. Of course, there must be a photoshoot! You have 3 minutes to get dressed, not including the photoshoot.",
+        "timeSeconds": 180,
+        "info": "The 3 minute timer is for getting dressed. The photoshoot afterwards has no time limit."
+      },
+      {
+        "id": "ll17",
+        "title": "Time for a Shave!",
+        "text": "Sorry, but the hair on your leg below the knee has to go! If you're a girl, your boyfriend takes the hit instead.",
+        "info": "Only if you agree to it. If you refuse, take the penalty."
+      },
+      {
+        "id": "ll18",
+        "title": "The Lion Sleeps Tonight!",
+        "text": "You're a singer now, and the group is your backing band. Use their voices to perform the ultimate version of \"The Lion Sleeps Tonight\"!"
+      },
+      {
+        "id": "ll19",
+        "title": "Dance Pro!",
+        "text": "You and the person on your left go into the next room. They have 3 minutes to teach you a dance routine. Then, you must perform it in front of the whole group.",
+        "timeSeconds": 180,
+        "info": "The timer is for the 3 minutes of teaching in the other room. The performance afterwards is not timed."
+      },
+      {
+        "id": "ll20",
+        "title": "A Shot to Wake You Up!",
+        "text": "Take a sip of vodka!"
+      },
+      {
+        "id": "ll21",
+        "title": "Blind as a Bat!",
+        "text": "Your eyes are covered for the next 3 rounds. Good luck!",
+        "info": "Cover your eyes with a scarf or a sleep mask. A round is one full turn of the table: it ends when it is your turn to draw again. Keep playing your own cards blind; someone reads them out for you."
+      },
+      {
+        "id": "ll22",
+        "title": "Hands Tied!",
+        "text": "Your hands are tied for the next 4 rounds. Good luck!",
+        "info": "Tie your hands together with a scarf or belt. A round is one full turn of the table: it ends when it is your turn to draw again."
+      },
+      {
+        "id": "ll23",
+        "title": "Drinking Parrot!",
+        "text": "You're a parrot, mate — an alcoholic parrot! Whenever someone drinks, you drink too!",
+        "info": "This lasts until the end of the game."
+      },
+      {
+        "id": "ll24",
+        "title": "Tequila Mode!",
+        "text": "For the next 3 rounds, whenever you drink, it has to be tequila.",
+        "info": "A round is one full turn of the table: it ends when it is your turn to draw again."
+      }
+    ],
+    "penalties": [
+      "Drink 3 shots."
+    ]
+  },
+  {
+    "id": "eight-legged-octopus",
+    "name": "Eight Legged Octopus",
+    "description": "Group scenes, battles, ties and duo cards. Bring friends and a scarf.",
+    "image": "/packs/eight-legged-octopus.png",
+    "published": true,
+    "cards": [
+      {
+        "id": "eo01",
+        "title": "Titanic Scene!",
+        "text": "You're an actor now! Watch the \"I'm Flying\" scene from Titanic and recreate it with the nearest person of the same gender. You're Rose, of course, so get into character and let your emotions take over! The person on your right films the scene. Use your surroundings and any available props.",
+        "info": "Look up the \"I'm Flying\" scene on YouTube first. You play Rose, the other person plays Jack."
+      },
+      {
+        "id": "eo02",
+        "title": "What a Mess!",
+        "text": "Everyone takes a shot!"
+      },
+      {
+        "id": "eo03",
+        "title": "Zorba Time!",
+        "text": "The whole group must dance the Greek dance \"Zorba\" together!"
+      },
+      {
+        "id": "eo04",
+        "title": "Song Battle!",
+        "text": "Everyone gives one word, and the others must sing an existing song that contains that word in its lyrics. The first person to sing a correct song wins, and the next round begins. The last person to sing drinks!",
+        "info": "Go around the table: each player says a word, everyone else races to sing a real song that contains it. The last one to sing in each round drinks."
+      },
+      {
+        "id": "eo05",
+        "title": "Back Drawing!",
+        "text": "The person on your right draws a picture on your back with their finger. You must recreate it on paper. The group decides whether you got it right. You have 3 minutes.",
+        "timeSeconds": 180,
+        "info": "They draw with a finger, slowly, one picture only. You may ask them to repeat it once."
+      },
+      {
+        "id": "eo06",
+        "title": "Who's the Impostor?",
+        "text": "You and the people on your left and right play \"Impostor\". Two of you will know the character, while one person won't. You have 4 rounds to say words related to the character and figure out who the impostor is.",
+        "info": "One player outside the game (or a phone app) secretly tells two of you a character; the third person is told only that they are the impostor. Take turns saying one word about the character. After 4 rounds of words, all point at the impostor. If you find them, the card is done."
+      },
+      {
+        "id": "eo07",
+        "title": "DUO CARD: Weird Positions!",
+        "text": "Together with the person who draws this card, recreate three poses chosen by the players. Search for \"weird positions\" on Pinterest. Don't forget to take pictures!",
+        "duo": true,
+        "info": "DUO card: there are two copies of this card in the deck. Whoever draws the first copy keeps it in mind and taps done; the game goes on. When someone draws the second copy, both of you do the challenge together, and the second player taps done or failed for the pair. The other players pick three poses from a Pinterest search for \"weird positions\"."
+      },
+      {
+        "id": "eo08",
+        "title": "DUO CARD: Weird Positions!",
+        "text": "Together with the person who draws this card, recreate three poses chosen by the players. Search for \"weird positions\" on Pinterest. Don't forget to take pictures!",
+        "duo": true,
+        "info": "DUO card: there are two copies of this card in the deck. Whoever draws the first copy keeps it in mind and taps done; the game goes on. When someone draws the second copy, both of you do the challenge together, and the second player taps done or failed for the pair. The other players pick three poses from a Pinterest search for \"weird positions\"."
+      },
+      {
+        "id": "eo09",
+        "title": "Cheeto Challenge!",
+        "text": "The mouth of the player on your left is your target! Try to throw a cheesy puff into their mouth from a distance of 3–5 metres. You get 5 attempts. Your target must stay completely still!",
+        "info": "Stand 3 to 5 metres away and throw one at a time. One catch in 5 attempts is a success."
+      },
+      {
+        "id": "eo10",
+        "title": "Belly Race!",
+        "text": "Race on your stomach with your hands behind your back! Your opponent is your partner or the person on your right of the same gender. The goal is to reach a cheesy puff 5 metres away before your opponent.",
+        "info": "Both start lying down with hands clasped behind your back. First to reach the cheesy puff wins. If you lose, the card is failed."
+      },
+      {
+        "id": "eo11",
+        "title": "Horror Movie Script!",
+        "text": "You're about to make a horror movie, but first, you need a script. Draw a number of boxes equal to the number of players. Draw the first scene in one box. You can add a description underneath to make it clearer, and don't forget the title! Once you've finished, pass the paper to the next person in reverse order of the game.",
+        "info": "Use one sheet of paper with one box per player. You draw scene 1 and the title. Pass the paper to the player who had their turn before you, and keep passing backwards around the table until every box has a scene. Then read the story out loud."
+      },
+      {
+        "id": "eo12",
+        "title": "Choir Time!",
+        "text": "You and the people closest to you on your left and right become a choir. Give us an unforgettable rendition of \"Ave Maria\" or \"My Heart Will Go On\"!"
+      },
+      {
+        "id": "eo13",
+        "title": "Where Am I?",
+        "text": "Leave the room while everyone else chooses a pose for you and a place where you must stand. When you return, the group must guide you to the correct spot using only \"hot\" and \"cold\" clues. You have 5 minutes!",
+        "timeSeconds": 300,
+        "info": "The group may only say \"hot\" (closer) or \"cold\" (further). When you reach the spot, take the pose. Done if you get both right within the time."
+      },
+      {
+        "id": "eo14",
+        "title": "Blind Foot Fight!",
+        "text": "You and your partner, or the nearest person of the same gender on your right, must race to touch each other's feet first — with your eyes closed!",
+        "info": "Sit facing each other, eyes closed. The first to touch the other person's foot with their own foot wins."
+      },
+      {
+        "id": "eo15",
+        "title": "Dance Battle!",
+        "text": "The worst challenge of all! You have 30 seconds to dance, followed by 30 seconds for the person opposite you. The judges choose the music for both dancers and decide the winner. The loser takes a shot!",
+        "timeSeconds": 60,
+        "info": "The timer covers both dancers: 30 seconds for you, then 30 seconds for the person opposite. The judges are everyone else."
+      },
+      {
+        "id": "eo16",
+        "title": "A Shot to Wake You Up!",
+        "text": "Take a sip of vodka!"
+      },
+      {
+        "id": "eo17",
+        "title": "Left-Handed Life!",
+        "text": "You're left-handed for the next 3 rounds.",
+        "info": "Use only your left hand for everything, including drinking. A round is one full turn of the table: it ends when it is your turn to draw again. If you are left-handed, use only your right hand."
+      },
+      {
+        "id": "eo18",
+        "title": "Attached at the Back!",
+        "text": "You're tied back-to-back to the person on your left for the next 3 rounds.",
+        "info": "Tie yourselves together with a scarf or belt. A round is one full turn of the table: it ends when it is your turn to draw again."
+      },
+      {
+        "id": "eo19",
+        "title": "TikTok Time!",
+        "text": "We all know someone in the group who makes TikToks. They get to choose a trend or dance, and you must record it with them. If nobody in the group makes TikToks, the group chooses the trend!",
+        "info": "Record it on a phone and show the group."
+      },
+      {
+        "id": "eo20",
+        "title": "Happy Feet!",
+        "text": "Stand in a bowl of cold water and ice for 8 seconds. If there is snow outside, snow works too.",
+        "timeSeconds": 8,
+        "info": "Both feet in, for 8 seconds. Start the timer once your feet are in the water."
+      },
+      {
+        "id": "eo21",
+        "title": "Legs Tied!",
+        "text": "Your legs are tied for the next 4 rounds. Good luck!",
+        "info": "A round is one full turn of the table: it ends when it is your turn to draw again."
+      },
+      {
+        "id": "eo22",
+        "title": "Can't Hear You!",
+        "text": "You're deaf for the next 3 rounds. Good luck!",
+        "info": "Wear headphones with loud music or earplugs. A round is one full turn of the table: it ends when it is your turn to draw again."
+      },
+      {
+        "id": "eo23",
+        "title": "Joined at the Leg!",
+        "text": "For the next 2 rounds, your leg is tied to the leg of the person on your right. Good luck!",
+        "info": "Tie your ankle to theirs with a scarf or belt. A round is one full turn of the table: it ends when it is your turn to draw again."
+      }
+    ],
+    "penalties": [
+      "Drink 3 shots."
+    ]
+  },
+  {
+    "id": "creative-crab",
+    "name": "Creative Crab",
+    "description": "Very creative tasks. Sing, draw, invent and perform. No talent required, only courage.",
+    "image": "/packs/creative-crab.svg",
+    "published": false,
+    "cards": [
+      {
+        "id": "cc01",
+        "text": "Invent a brand new holiday. Name it, explain how people celebrate it and lead the group in its traditional greeting.",
+        "info": "Everyone has to copy your greeting at the end."
+      },
+      {
+        "id": "cc02",
+        "text": "Sing the last message you received as an opera aria.",
+        "timeSeconds": 45,
+        "info": "Read it from your phone if you need to. Private parts may be replaced with 'la la la'."
+      },
+      {
+        "id": "cc03",
+        "text": "Draw a portrait of the person on your left using your non-dominant hand.",
+        "timeSeconds": 60,
+        "info": "Any paper works. Show the result to everyone when the time is up."
+      },
+      {
+        "id": "cc04",
+        "text": "Explain how a toaster works as if you were a pirate captain.",
+        "timeSeconds": 30
+      },
+      {
+        "id": "cc05",
+        "text": "Create a 4-line poem about the object closest to you. It has to rhyme.",
+        "timeSeconds": 60
+      },
+      {
+        "id": "cc06",
+        "text": "Do a nature documentary narration of the person on your right for 30 seconds.",
+        "timeSeconds": 30,
+        "info": "Whisper like a wildlife presenter. They are allowed to keep doing whatever they were doing."
+      },
+      {
+        "id": "cc07",
+        "text": "Sell an empty glass to the group. Anyone may make a counter-offer.",
+        "timeSeconds": 45
+      },
+      {
+        "id": "cc08",
+        "text": "Build a tiny sculpture from things on the table and give it a dramatic name."
+      },
+      {
+        "id": "cc09",
+        "text": "Tell the story of how you got here today as a horror movie trailer."
+      },
+      {
+        "id": "cc10",
+        "text": "Speak only in questions until your next turn.",
+        "info": "If you say a sentence that is not a question before your next turn, you take a penalty."
+      },
+      {
+        "id": "cc11",
+        "text": "Choreograph a 10-second dance and teach it to everyone."
+      },
+      {
+        "id": "cc12",
+        "text": "Invent a new word, define it and use it in three sentences."
+      },
+      {
+        "id": "cc13",
+        "text": "Make the group laugh without saying a single word.",
+        "timeSeconds": 30
+      },
+      {
+        "id": "cc14",
+        "text": "Describe your favourite food as if it were your best friend at their wedding."
+      },
+      {
+        "id": "cc15",
+        "text": "You have to win a race of Wikipedia with the person in front of you. The person on the left and right choose the beginning and ending word.",
+        "timeSeconds": 180,
+        "info": "Both players start on the same Wikipedia article and may only click links inside articles. The first one to reach the ending article wins. No search bar."
+      }
+    ],
+    "penalties": [
+      "Do your best crab walk around the table.",
+      "Make claw hands and keep them until your next turn.",
+      "Compliment every player in a different accent."
+    ]
+  },
+  {
+    "id": "quick-fire",
+    "name": "Quick Fire",
+    "description": "Short, fast, timed challenges to warm up the table.",
+    "image": "/packs/quick-fire.svg",
+    "published": false,
+    "cards": [
+      {
+        "id": "qf01",
+        "text": "Name 8 animals that start with the letter B.",
+        "timeSeconds": 20
+      },
+      {
+        "id": "qf02",
+        "text": "Say the alphabet backwards from M to A.",
+        "timeSeconds": 15
+      },
+      {
+        "id": "qf03",
+        "text": "Balance a spoon on your nose.",
+        "timeSeconds": 10,
+        "info": "Any small object works if there is no spoon."
+      },
+      {
+        "id": "qf04",
+        "text": "List 5 things in this room that are blue.",
+        "timeSeconds": 15
+      },
+      {
+        "id": "qf05",
+        "text": "Tell a joke. At least one person has to laugh."
+      },
+      {
+        "id": "qf06",
+        "text": "Do 10 squats while saying the names of all players."
+      }
+    ],
+    "penalties": []
+  }
+]

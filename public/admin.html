@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Why Me? - Admin</title>
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/admin.css">
+</head>
+<body class="admin">
+<section id="login" class="a-login navy" hidden>
+  <form id="loginForm" class="a-card">
+    <img src="/assets/deck.svg" alt="" class="a-logo">
+    <h1>Admin</h1>
+    <input type="password" id="pw" placeholder="Password" autocomplete="current-password" required>
+    <button class="pill pill-navy" type="submit">Log in</button>
+    <p class="a-msg" id="loginMsg" role="alert"></p>
+  </form>
+</section>
+
+<div id="app" hidden>
+  <header class="a-top navy">
+    <strong>Why Me? Admin</strong>
+    <nav>
+      <button class="tab on" data-tab="packs" type="button">Packs</button>
+      <button class="tab" data-tab="ideas" type="button">Ideas <span id="ideaCount"></span></button>
+      <button class="tab" data-tab="penalties" type="button">Default penalties</button>
+      <button class="tab" data-tab="schema" type="button">Import schema</button>
+    </nav>
+    <button class="pill pill-ghost-w" id="logout" type="button">Log out</button>
+  </header>
+
+  <main class="a-main">
+    <section data-view="packs">
+      <div class="a-split">
+        <aside class="a-list">
+          <button class="pill pill-navy" id="newPack" type="button">New pack</button>
+          <ul id="packList"></ul>
+        </aside>
+        <div class="a-editor" id="editor">
+          <p class="a-empty">Choose a pack or create a new one.</p>
+        </div>
+      </div>
+    </section>
+    <section data-view="ideas" hidden><h2>Ideas from players</h2><ul id="ideas" class="a-ideas"></ul></section>
+    <section data-view="penalties" hidden>
+      <h2>Default penalties</h2>
+      <p class="a-help">Used by packs that have no penalties of their own, by Own and as part of Random. One penalty per line.</p>
+      <textarea id="defPen" rows="12"></textarea>
+      <button class="pill pill-navy" id="saveDefPen" type="button">Save penalties</button> <span class="a-msg" id="defPenMsg"></span>
+    </section>
+    <section data-view="schema" hidden>
+      <h2>Bulk import schema</h2>
+      <p class="a-help">Open a pack, then use <b>Import cards</b>. Accepted files: <code>.json</code> or <code>.csv</code> (UTF-8).</p>
+      <h3>JSON</h3>
+<pre>{
+  "cards": [
+    { "title": "Opera Time!",
+      "text": "Sing the last message you received as an opera aria.",
+      "timeSeconds": 45,
+      "info": "Optional explanation shown under the diamond button." },
+    { "text": "Invent a new word and use it in three sentences." },
+    { "title": "DUO CARD: Same Word!", "text": "Wait until someone draws the matching card...", "duo": true },
+    { "title": "DUO CARD: Same Word!", "text": "Wait until someone draws the matching card...", "duo": true }
+  ],
+  "penalties": ["Do 10 jumping jacks."]
+}</pre>
+      <p class="a-help">A plain array of cards (or of strings) also works. <code>text</code> is required (max 500 chars). <code>timeSeconds</code> is an optional positive number (max 3600). <code>info</code> is optional (max 1000 chars). <code>title</code> is optional (max 80 chars) and is shown large above the text. <code>duo</code> (true/false) marks a DUO card: DUO cards are meant to come in pairs, so identical DUO cards are kept. Other duplicates (same title and text) are skipped.</p>
+      <h3>CSV</h3>
+<pre>type,title,text,timeSeconds,info,duo
+card,Opera Time!,"Sing the last message you received as an opera aria.",45,"Read it from your phone.",
+card,,Invent a new word and use it in three sentences.,,,
+card,DUO CARD: Same Word!,Wait until someone draws the matching card...,,,true
+card,DUO CARD: Same Word!,Wait until someone draws the matching card...,,,true
+penalty,,Do 10 jumping jacks.,,,</pre>
+      <p class="a-help">Header row required; only <code>text</code> is mandatory; <code>title</code> and <code>duo</code> columns are optional, so old files keep working. <code>type</code> is <code>card</code> (default) or <code>penalty</code>. Comma or semicolon separators; wrap values containing commas in double quotes.</p>
+      <p class="a-help"><b>Append</b> adds to existing cards. <b>Replace</b> swaps all cards (and penalties, if the file has any).</p>
+    </section>
+  </main>
+</div>
+
+<template id="editorTpl">
+  <form class="a-form" id="packForm">
+    <div class="a-row a-head">
+      <div class="a-img"><img id="pImg" alt=""><label class="pill pill-ghost a-upl">Upload image<input type="file" id="pImgFile" accept="image/png,image/jpeg,image/webp" hidden></label></div>
+      <div class="a-fields">
+        <label>Pack name<input id="pName" maxlength="60" required></label>
+        <label>Description<textarea id="pDesc" rows="3" maxlength="400"></textarea></label>
+        <label class="a-check"><input type="checkbox" id="pPub"> Published (visible to players)</label>
+      </div>
+    </div>
+    <h3>Cards <span id="pCount"></span></h3>
+    <div class="a-import">
+      <label class="pill pill-ghost">Import cards (JSON / CSV)<input type="file" id="importFile" accept=".json,.csv,application/json,text/csv" hidden></label>
+      <label><input type="radio" name="imode" value="append" checked> Append</label>
+      <label><input type="radio" name="imode" value="replace"> Replace</label>
+      <span class="a-msg" id="importMsg"></span>
+    </div>
+    <table class="a-cards"><thead><tr><th>Title</th><th>Challenge text</th><th>Timer (s)</th><th>Info / explanation</th><th></th></tr></thead><tbody id="cardRows"></tbody></table>
+    <button class="pill pill-ghost" id="addCard" type="button">Add card</button>
+    <h3>Penalties for this pack</h3>
+    <p class="a-help">One per line. Leave empty to use the default penalties.</p>
+    <textarea id="pPen" rows="5"></textarea>
+    <div class="a-actions">
+      <button class="pill pill-navy" type="submit">Save pack</button>
+      <button class="pill pill-danger" id="delPack" type="button">Delete pack</button>
+      <span class="a-msg" id="saveMsg" role="status"></span>
+    </div>
+  </form>
+</template>
+<script src="/admin.js"></script>
+</body>
+</html>

@@ -8,7 +8,8 @@
     "start": "node server.js",
     "set-password": "node scripts/set-password.js",
     "test": "node tests/e2e.js",
-    "test:layout": "node tests/layout.js"
+    "test:layout": "node tests/layout.js && node tests/cards.js",
+    "test:cards": "node tests/cards.js"
   },
   "engines": {
     "node": ">=18"

@@ -280,6 +280,7 @@ function layout() {
   st.style.setProperty('--sh', Math.min(w, h) + 'px');
   st.style.setProperty('--vw', w + 'px');
   st.classList.toggle('rot', portrait);
+  if (game && !$('#game').hidden) fitCard();
 }
 function openGame() {
   game.inGame = true; persist(); document.documentElement.classList.add('game-open');
@@ -323,17 +324,30 @@ function render(flipAnim, dealAnim, instant) {
   el.classList.toggle('can-drag', game.phase === 'front');
   const hasInfo = game.phase === 'front' && !!c.info;
   $('#btnInfo').disabled = !hasInfo; $('#btnInfo').classList.toggle('has-info', hasInfo);
-  tick();
+  tick(); fitCard();
+}
+/* shrink title and text together until everything fits the white panel (min 11px text) */
+function fitCard() {
+  const panel = $('.front-panel'), txt = $('#cardText'), ttl = $('#cardTitle');
+  txt.style.fontSize = ''; ttl.style.fontSize = ''; panel.classList.remove('tight');
+  if (!panel.clientHeight) return;
+  const over = () => panel.scrollHeight > panel.clientHeight + 1 || txt.scrollWidth > txt.clientWidth + 1 || (!ttl.hidden && ttl.scrollWidth > ttl.clientWidth + 1) || txt.scrollHeight > txt.clientHeight + 1 || (!ttl.hidden && ttl.scrollHeight > ttl.clientHeight + 1);
+  let ft = parseFloat(getComputedStyle(txt).fontSize), fh = parseFloat(getComputedStyle(ttl).fontSize);
+  for (let i = 0; i < 40 && over(); i++) {
+    if (ft <= 10.5 && fh <= 13) { if (panel.classList.contains('tight')) break; panel.classList.add('tight'); continue; }
+    ft = Math.max(10.5, ft * .94); fh = Math.max(13, fh * .94);
+    txt.style.fontSize = ft + 'px'; ttl.style.fontSize = fh + 'px';
+  }
 }
 function tick() {
   const t = game && game.phase === 'front' ? game.timer : null;
   const pill = $('#gTimer'), startB = $('#timerStart');
-  if (!t) { pill.hidden = true; startB.hidden = true; return; }
+  if (!t) { pill.hidden = true; if (!startB.hidden) { startB.hidden = true; fitCard(); } return; }
   let rem = t.running ? t.endsAt - Date.now() : t.remaining;
   if (t.running && rem <= 0) { markFailed('time'); return; }
   pill.hidden = false; pill.textContent = fmt(rem);
   pill.classList.toggle('low', t.running && rem <= 5000);
-  startB.hidden = t.running;
+  if (startB.hidden !== t.running) { startB.hidden = t.running; fitCard(); }
   startB.textContent = (t.remaining < t.total ? 'Resume timer ' : 'Start timer ') + fmt(rem);
 }
 setInterval(() => { if (!$('#game').hidden) tick(); }, 200);
@@ -452,6 +466,7 @@ $('#playBtn').onclick = () => {
 $('#resumeBtn').onclick = () => game && openGame();
 
 window.addEventListener('resize', layout);
+if (document.fonts) document.fonts.ready.then(() => { if (game && !$('#game').hidden) fitCard(); });
 window.addEventListener('orientationchange', () => setTimeout(layout, 120));
 document.addEventListener('visibilitychange', () => { if (document.hidden) pauseTimer(); else if (!$('#game').hidden) render(); });
 window.addEventListener('pagehide', pauseTimer);
@@ -599,7 +614,7 @@ renderContact(); renderMenu();
 if (game && game.inGame && game.deck && game.deck.length) openGame();
 fetchData();
 if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('/sw.js').catch(() => {});
-window.__whyme = { get game() { return game; }, get opens() { return openCount; },
+window.__whyme = { render: (...a) => render(...a), get game() { return game; }, get opens() { return openCount; },
   /* screen position of a point on the tear line (x in % of the pack width), for tests and demos */
   tearPoint(x) { const p = $('#sealPack'); if (!p) return null; const b = packBox();
     const m = new DOMMatrix(getComputedStyle($('#stage')).transform);

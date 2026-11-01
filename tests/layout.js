@@ -4,7 +4,7 @@ const { spawn } = require('child_process');
 const fs = require('fs'), os = require('os'), path = require('path');
 const PORT = 3200, BASE = `http://localhost:${PORT}`;
 const DATA = fs.mkdtempSync(path.join(os.tmpdir(), 'whyme-layout-'));
-const SIZES = [[360,640],[375,667],[390,844],[430,932],[844,390],[667,375],[1280,800]];
+const SIZES = [[320,568],[360,640],[375,667],[390,844],[430,932],[844,390],[667,375],[1280,800]];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const KEY = 'whyme.game.v1';
 /* per screen: inView = must be fully inside the viewport, hOnly = only horizontally (scrolling sections), apart = must not overlap each other */

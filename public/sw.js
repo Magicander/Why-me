@@ -1,5 +1,5 @@
 /* Why Me? service worker: app shell cache-first, API network-first with cached fallback. */
-const VERSION = 'whyme-v7';
+const VERSION = 'whyme-v8';
 const SHELL = ['/', '/index.html', '/styles.css', '/app.js', '/manifest.webmanifest', '/fonts/fraunces-latin.woff2',
   '/assets/why.svg', '/assets/me.svg', '/assets/deck.svg', '/assets/play.svg', '/assets/done.svg', '/assets/failed.svg', '/assets/arrow.svg',
   '/packs/random.svg', '/packs/own.svg', '/packs/legless-lizard.png', '/packs/eight-legged-octopus.png', '/packs/plain-pack.svg', '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png',
